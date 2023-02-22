@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Plan_aereo.Models;
+using RADER.ModelView;
 
 namespace Plan_aereo.Controllers
 {
@@ -26,9 +27,24 @@ namespace Plan_aereo.Controllers
         {
             return await _context.Pasajeros.ToListAsync();
         }
+		// GET LOGIN FRONT - BACK
+		[HttpGet("/api/Usuarios/{user}/{password}")]
+		public async Task<ActionResult<IEnumerable<usuarioView>>> GetLogIn(string user, string password)
+		{
+			var query = (from e in _context.Pasajeros
+						 where e.UsuarioPasajero == user && e.ClavePasajero == password
+						 select new usuarioView
+						 {
+							 
+							 Clave_Usuario = password,
+							 Nombre_Usuario = user
 
-        // GET: api/Pasajeroes/5
-        [HttpGet("{id}")]
+						 }).ToArrayAsync();
+			return await query;
+		}
+
+		// GET: api/Pasajeroes/5
+		[HttpGet("{id}")]
         public async Task<ActionResult<Pasajero>> GetPasajero(int id)
         {
             var pasajero = await _context.Pasajeros.FindAsync(id);
